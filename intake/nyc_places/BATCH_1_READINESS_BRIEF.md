@@ -56,11 +56,11 @@ IDs below are the live maximums **at read time only**. Per SIG-DC-054, re-read e
 8. **Preflight writes.** Should the Drive manifest and the IG continuation capture be written before approval, or held?
 9. **Time windows differ.** IG covers only 2025-09-21..2026-09-21 and TikTok covers 2021-02-20..2026-09-28, so batch 1 (newest first) may be TikTok-heavy and IG-free for its last week. Acceptable?
 
-## 5b. DECISIONS — approved by Monisha 2026-09-30 (these supersede 5a where they differ)
+## 5b. DECISIONS — FINAL, approved and confirmed by Monisha 2026-09-30 (supersede 5a)
 
 | # | Decision |
 |---|---|
-| 1 | One capture row per batch in **01_CAPTURE_INBOX** (RECENT_INTAKE reflects it). **Every venue found gets a 02_ENTITIES ID**, so each venue is tracked individually. Want to Go / Reference venues also get 16 (and 17 for Want to Go). **Skip venues: entity only**, with `Lifecycle_Status = Archived` and `Why_Saved_Summary = "Skipped — NYC intake <platform> batch k; do not resurface"`, plus evidence in Notes. No place, visit, route or collection link. *Needs Monisha's one-line confirmation: this replaces the original "Skip = no entity" rule.* |
+| 1 | One capture row per batch in **01_CAPTURE_INBOX** (RECENT_INTAKE reflects it). **Every venue found gets a 02_ENTITIES ID**, so each venue is tracked individually. Want to Go / Reference venues also get 16 (and 17 for Want to Go). **Skip venues: entity only**, with `Lifecycle_Status = Archived` and `Why_Saved_Summary = "Skipped — NYC intake <platform> batch k; do not resurface"`, plus evidence in Notes. No place, visit, route or collection link. Confirmed 2026-09-30: replaces the original "Skip = no entity" rule. |
 | 2 | Skip decisions are also listed in the batch's 01 capture Notes (`SKIPPED:` block). Later batches match against Archived entities first. |
 | 3 | One 08 row per written place, Signal_ID = SIG-1537, Destination_Record_ID = PLACE-xxxx. 16.Primary_Signal_ID = SIG-1537. |
 | 4 | Evidence stays in 16.Notes (`EVIDENCE: <url> s3; <url> f2 \| CAP: …`). **Neighborhood becomes a new dropdown column `Neighborhood`, appended at the end of 16_PLACES (col AE)** so no existing column position shifts. Dropdown (data validation) values: Chelsea; Flatiron; Midtown; West Village; NoMad; Hudson Yards; Meatpacking; Greenwich Village; Koreatown; Other NYC. Register the value list in 90_TAXONOMY as "NYC neighborhood" (explicitly approved taxonomy addition). Structural change made at write time only, then read back. |
