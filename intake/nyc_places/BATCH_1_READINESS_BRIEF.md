@@ -56,7 +56,23 @@ IDs below are the live maximums **at read time only**. Per SIG-DC-054, re-read e
 8. **Preflight writes.** Should the Drive manifest and the IG continuation capture be written before approval, or held?
 9. **Time windows differ.** IG covers only 2025-09-21..2026-09-21 and TikTok covers 2021-02-20..2026-09-28, so batch 1 (newest first) may be TikTok-heavy and IG-free for its last week. Acceptable?
 
-## 5a. Recommended resolutions (PENDING MONISHA APPROVAL — do not apply until approved)
+## 5b. DECISIONS — approved by Monisha 2026-09-30 (these supersede 5a where they differ)
+
+| # | Decision |
+|---|---|
+| 1 | One capture row per batch in **01_CAPTURE_INBOX** (RECENT_INTAKE reflects it). **Every venue found gets a 02_ENTITIES ID**, so each venue is tracked individually. Want to Go / Reference venues also get 16 (and 17 for Want to Go). **Skip venues: entity only**, with `Lifecycle_Status = Archived` and `Why_Saved_Summary = "Skipped — NYC intake <platform> batch k; do not resurface"`, plus evidence in Notes. No place, visit, route or collection link. *Needs Monisha's one-line confirmation: this replaces the original "Skip = no entity" rule.* |
+| 2 | Skip decisions are also listed in the batch's 01 capture Notes (`SKIPPED:` block). Later batches match against Archived entities first. |
+| 3 | One 08 row per written place, Signal_ID = SIG-1537, Destination_Record_ID = PLACE-xxxx. 16.Primary_Signal_ID = SIG-1537. |
+| 4 | Evidence stays in 16.Notes (`EVIDENCE: <url> s3; <url> f2 \| CAP: …`). **Neighborhood becomes a new dropdown column `Neighborhood`, appended at the end of 16_PLACES (col AE)** so no existing column position shifts. Dropdown (data validation) values: Chelsea; Flatiron; Midtown; West Village; NoMad; Hudson Yards; Meatpacking; Greenwich Village; Koreatown; Other NYC. Register the value list in 90_TAXONOMY as "NYC neighborhood" (explicitly approved taxonomy addition). Structural change made at write time only, then read back. |
+| 5 | HSP- `Hospitality / Place` for food, drink and stays; PLC- `Place / Destination` for shops, activities and venues; BRD- parent for chains; venue handles only in 03. |
+| 6 | **Saves and likes both count**, deduped. One row per post ID: IG `saved+liked` is one row; a TikTok ID present as both favorite and like is one row. Each post keeps an `engagement` field (saved / liked / both) for priority. A venue that appears in many posts, or across both platforms, is **one entity**; extra posts only add evidence (evidence_count). |
+| 7 | Area-blank rows are included **only when a venue is explicitly named** (caption, hashtags or location tag) **and its address is verified** against an official site or map listing as inside one of the listed neighborhoods. Anything ambiguous stays out and is counted in the "area unknown — not included" line. Boundary and `needs_check` saves are included and flagged. |
+| 8 | Local run writes the ordered manifest as a CSV to the Signal External Reference Archive (`16F7vMR6GpcYOnV4958anTFswXgmU7Q6M`), with its SHA-256 recorded, **before** approval. All Index writes wait for approval. |
+| 9 | **Platforms run as separate sets:** TikTok batches "TikTok Batch k of N_T" and Instagram batches "Instagram Batch k of N_I", each ordered by saved_at desc then post ID. **TikTok first**, because its area file already exists; the IG extraction is built in parallel. Cross-platform duplicates resolve at venue level through decision 6 (one entity). |
+
+**Build order for the local run:** hash checks → TikTok set from area-stated rows → text-only venue pass on the area-blank rows, keeping only rows with an explicitly named venue and a verified address → lock the TikTok manifest and N_T → TikTok batch 1 preflight (browser review of carousels and roundups). The IG extraction and its manifest follow the same steps.
+
+## 5a. Recommended resolutions (superseded by 5b)
 
 | # | Recommendation |
 |---|---|
