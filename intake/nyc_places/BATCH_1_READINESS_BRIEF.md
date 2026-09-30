@@ -56,6 +56,20 @@ IDs below are the live maximums **at read time only**. Per SIG-DC-054, re-read e
 8. **Preflight writes.** Should the Drive manifest and the IG continuation capture be written before approval, or held?
 9. **Time windows differ.** IG covers only 2025-09-21..2026-09-21 and TikTok covers 2021-02-20..2026-09-28, so batch 1 (newest first) may be TikTok-heavy and IG-free for its last week. Acceptable?
 
+## 5a. Recommended resolutions (PENDING MONISHA APPROVAL — do not apply until approved)
+
+| # | Recommendation |
+|---|---|
+| 1 | One capture row per batch in **01_CAPTURE_INBOX**; RECENT_INTAKE reflects it. The IG NYC extraction gets its own one-time CONTINUATION capture citing CAP-0321 / CAP-0262. |
+| 2 | Skip decisions are recorded in the batch's **01_CAPTURE_INBOX row Notes** under a fixed `SKIPPED:` block (venue key · post URL + frame refs). The manifest carries the same decision per save as evidence. Later batches read prior batch captures before surfacing a venue. No entity, no signal, no side list (SIG-DC-053, SIG-DC-056). |
+| 3 | One 08 row per written place, Signal_ID = **SIG-1537**, Destination_Record_ID = PLACE-xxxx. Also set 16.Primary_Signal_ID = SIG-1537. |
+| 4 | No new columns. 16.Notes uses a fixed prefix `NBHD: … \| EVIDENCE: <url> s3; <url> f2 \| CAP: …`. Primary_Source_URL holds the single most direct post. City / Region / Country = New York / New York / United States. |
+| 5 | Food & drink and stays → `HSP-` + `Hospitality / Place`. Shops, activities and venues → `PLC-` + `Place / Destination`. Multi-location brands → `BRD-` parent + Parent_Brand_or_Entity_ID (SIG-DC-024). 03 gets **venue** handles only, never creator handles (SIG-DC-032). |
+| 6 | Saves only: IG `saved` + `saved+liked`; TikTok `favorite`. Likes are excluded (SIG-DC-049 evidence hierarchy). |
+| 7 | Membership is deterministic from the by-area area column plus the same term map applied to IG. Boundary-term saves (NoMad, Meatpacking, Hudson Yards, Greenwich Village, Koreatown) and `needs_check` saves are **included and flagged**, so the order never shifts. Non-NYC saves found during review are marked out-of-scope but still count as reviewed. The 9,131 area-blank rows are out of this intake and deferred to a later area-unknown pass. |
+| 8 | Before approval, write the ordered manifest as an **immutable CSV** to the Signal External Reference Archive (`16F7vMR6GpcYOnV4958anTFswXgmU7Q6M`) and record its SHA-256. Hold every Index write, including the IG continuation capture, until approval. |
+| 9 | Keep pure saved_at order as specified. Report the platform mix and saved_at range per batch. |
+
 ## 6. Per-tag write pattern (matches live rows)
 
 - **Want to Go:** 02 (Lifecycle Active) → 03 if a handle is visible → 16 (Visit_Intent `Want to Go`, Geo_Verification_State `Verified` only with an address check, else `Needs Review`) → 10 (COL-LIFE-001, Record_Type Place) → 17 (`Idea` / `Not Ready` / `Open`) → 08.
